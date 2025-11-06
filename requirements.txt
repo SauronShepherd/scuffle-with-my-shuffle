@@ -1,0 +1,5 @@
+pyspark==4.0.1
+pyspark-tests==1.3.5
+graphframes-py==0.10.0
+typing_extensions==4.15.0
+requests==2.32.5
