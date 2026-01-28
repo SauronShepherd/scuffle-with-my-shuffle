@@ -159,7 +159,7 @@ def input_data(request):
     spark = builder.getOrCreate()
 
     # Increase log verbosity to DEBUG for detailed trace output
-    spark.sparkContext.setLogLevel("DEBUG")
+    #spark.sparkContext.setLogLevel("DEBUG")
 
     # Load datasets
     vertices = get_vertices()

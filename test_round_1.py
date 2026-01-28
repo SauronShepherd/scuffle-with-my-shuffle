@@ -31,6 +31,7 @@ def test(input_data):
         vertices.alias("a")
                 .join(edges.alias("follows"), col("a.id") == col("follows.src"))
                 .join(vertices.alias("b"), col("follows.dst") == col("b.id"))
+                .drop("src", "dst")
     )
 
     # Write results to a no-op sink to trigger execution without output
