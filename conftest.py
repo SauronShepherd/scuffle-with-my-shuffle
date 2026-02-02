@@ -118,7 +118,7 @@ def get_edges():
 
 
 # -------------------------------------------------------------------
-# Pytest Spark fixture
+# Pytest input_data fixture
 # -------------------------------------------------------------------
 
 @pytest.fixture
@@ -126,6 +126,7 @@ def input_data(request):
     """
     Creates a Spark session for the test, applies optional test-specific
     configuration, loads the vertices and edges datasets, and yields them.
+
 
     Parameters
     ----------
@@ -149,7 +150,7 @@ def input_data(request):
     config = getattr(request, "param", {})
 
     # Build a Spark session with an application name derived from the test name
-    builder = SparkSession.builder.appName(request.node.name)
+    builder = SparkSession.builder
 
     # Apply any custom Spark configuration options
     for key, value in config.items():
@@ -167,6 +168,48 @@ def input_data(request):
 
     # Yield the data for the test
     yield vertices, edges
+
+    # Pause to allow inspection before Spark shutdown
+    print("Press a key to continue...")
+    input()
+
+    # Cleanly stop Spark after the test
+    spark.stop()
+
+
+# -------------------------------------------------------------------
+# Pytest spark fixture
+# -------------------------------------------------------------------
+
+@pytest.fixture
+def spark(request):
+    """
+    Creates a Spark session for the test, applies optional test-specific
+    configuration, loads the vertices and edges datasets, and yields them.
+
+
+    Parameters
+    ----------
+    request : pytest.FixtureRequest
+        Allows parametrization of the fixture. Any dictionary passed via
+        @pytest.mark.parametrize(..., indirect=True) will be interpreted
+        as Spark configuration options.
+
+    Yields
+    ------
+    SparkSession
+
+    Notes
+    -----
+    - The Spark session is stopped after the test completes.
+    - Pauses execution waiting for user input after the test run.
+    """
+
+    # Create or reuse existing Spark session
+    spark = SparkSession.builder.getOrCreate()
+
+    # Yield the data for the test
+    yield spark
 
     # Pause to allow inspection before Spark shutdown
     print("Press a key to continue...")
